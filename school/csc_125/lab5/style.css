@@ -1,0 +1,142 @@
+:root {
+    --main-bg-color: antiquewhite;
+    --game-img-height: 200px;
+    --game-img-width: 200px;
+    --game-img-height-hover: 220px;
+    --game-img-width-hover: 220px;
+    --game-img-margin-hover: 0px;
+    --game-img-margin: 20px;
+    --game-img-column-gap: 20px;
+    --game-img-row-gap: 10px;
+    --game-img-boarder-radius: 30px;
+
+    --primary-font: "Lucida Console";
+    --secondary-font: "Courier New";
+    --default-font: monospace;
+
+    --primary-color: black;
+    --accent-color: #555555;
+}
+
+.container {
+    display: grid;
+    grid-template-areas:
+        "header header header"
+        "sidebar sidebar sidebar"
+        "content content content";
+    gap: 20px;
+}
+
+main {
+    grid-area: content;
+}
+
+
+* {
+    color: var(--primary-color);
+    background-color: var(--main-bg-color);
+    font-family: var(--primary-font), var(--secondary-font), var(--default-font);
+}
+
+body {
+    width: 80%;
+    margin-left: 10%;
+}
+
+a {
+    text-decoration: none;
+}
+
+article:nth-of-type(odd) h2 {
+    color: var(--accent-color);
+}
+
+article h2 {
+    text-align: center;
+}
+
+header {
+    grid-area: header;
+    text-align: center;
+    text-decoration: underline;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+
+header img {
+    height: 60px;
+}
+
+.games {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    column-gap: var(--game-img-column-gap);
+    row-gap: var(--game-img-row-gap);
+}
+
+.games img {
+    height: var(--game-img-height);
+    width: var(--game-img-width);
+    margin: var(--game-img-margin);
+    border-radius: var(--game-img-boarder-radius);
+}
+
+.games img:nth-last-of-type(even) {
+    border: 3px solid black;
+}
+
+.games img:nth-last-of-type(odd) {
+    border: 3px double black;
+}
+
+.games img:hover {
+    height: var(--game-img-height-hover);
+    width: var(--game-img-width-hover);
+    margin: var(--game-img-margin-hover);
+}
+
+aside {
+    grid-area: sidebar;
+}
+
+aside nav {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: space-around;
+    row-gap: 3px;
+}
+
+@media screen and (max-width: 768px) {
+
+    .games {
+        flex-direction: column;
+    }
+
+    header {
+        text-decoration: none;
+    }
+
+    aside nav {
+        text-decoration: underline;
+        flex-direction: column;
+    }
+
+    .container {
+        grid-template-areas:
+            "header"
+            "sidebar"
+            "content";
+        gap: 20px;
+    }
+
+    header img {
+        display: None;
+    }
+
+}
