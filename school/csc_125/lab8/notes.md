@@ -79,5 +79,8 @@ https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_l
 Note: Do Card 2 first because the Theme toggle is suppose to affect the Card two items
 
 - [ ] Write the code to fill in the "systemModules" to fill out the html along with spans for the "badges"
+- See [Kitchen Sink Card docs](https://getbootstrap.com/docs/5.3/components/card/#kitchen-sink) for ideas on how to add the <li> items
 
 - [ ] Create the Theme toggle button and figure out how I want to "cascade" the them classes (I am really torn about whether or not I want a Theme class that requires all the component classes to register and then the class has methods for applying and switching themes.)
+
+- The `badges` will have their own set of bootstrap classes that will need to get toggles with the them (See [Pill-Badges](https://getbootstrap.com/docs/5.3/components/badge/#pill-badges) for an example of what I am talking about). As such, I think it makes sense that each Component class has a methods that produces a list of theme related selectors that have to registered the the Theme class).
