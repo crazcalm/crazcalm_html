@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lab 7</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.css" rel="stylesheet"
+        crossorigin="anonymous">
+</head>
+
+<body class="container text-center">
+    <header>
+        <h1>System Health &amp; Energy Monitor</h1>
+    </header>
+    <main>
+        <div class="row justify-content-around">
+            <div class="card col-4" id="system-monitor-card">
+                <h5 class="card-header">System Power</h5>
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <button class="btn btn-primary" id="system-monitor-online-button">ONLINE</button>
+                    <button class="btn btn-primary" id="system-monitor-standby-button">STANDBY</button>
+                    <button class="btn btn-primary" id="system-monitor-critical-button">CRITICAL</button>
+                </div>
+            </div>
+
+            <div class="card col-4" id="energy-monitor-card">
+                <h5 class="card-header">Energy Monitor</h5>
+                <div class="card-body">
+                    <div class="progress" role="progressbar" aria-label="Success example" aria-valuenow="25"
+                        aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar text-bg-success" style="width: 0%">0%</div>
+                    </div>
+                    <button class="btn btn-primary" id="energy-monitor-plus-button">+10 MW</button>
+                    <button class="btn btn-primary" id="energy-monitor-minus-button">-10 MW</button>
+                    <button class="btn btn-primary" id="energy-monitor-reset-button">Reset load</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.js"
+        crossorigin="anonymous"></script>
+    <script>
+        const system_monitor_card = document.querySelector("#system-monitor-card");
+        const energy_monitor_card = document.querySelector("#energy-monitor-card");
+
+        class BaseCard {
+            constructor(card) {
+                this.card = card;
+            }
+
+            getCardTitle() {
+                return this.card.querySelector(".card-title");
+            }
+
+            setCardTitleText(text) {
+                this.getCardTitle().textContent = text;
+            }
+        }
+
+        class EnergyMonitorCard extends BaseCard {
+            plusButtonSelector = "#energy-monitor-plus-button"
+            minusButtonSelector = "#energy-monitor-minus-button"
+            resetButtonSelector = "#energy-monitor-reset-button"
+            progressBarSelector = ".progress-bar"
+
+            default = 0;
+            change_unit = 10;
+            constructor(card) {
+                super(card);
+                this.currentLoad = this.default;
+            }
+
+            setDefaults() {
+                this.currentLoad = this.default;
+                this.setProgressBar();
+            }
+
+            setProgressBar() {
+                let progressBar = this.getProgressBar();
+                let value = `${this.currentLoad}%`;
+                progressBar.style.width = value;
+                progressBar.textContent = value;
+
+                this.setProgressBarClass();
+            }
+            setProgressBarClass() {
+                let progressBar = this.getProgressBar()
+
+                let classes = ["bg-info", "bg-warning", "bg-danger"];
+                //remove all classes
+                for (let cls of classes) {
+                    progressBar.classList.remove(cls);
+                }
+
+                // set class
+                if (this.currentLoad <= 49) {
+                    progressBar.classList.add("bg-info");
+                } else if (this.currentLoad <= 79) {
+                    progressBar.classList.add("bg-warning");
+                } else {
+                    progressBar.classList.add("bg-danger");
+                }
+            }
+
+            getProgressBar() {
+                return this.card.querySelector(this.progressBarSelector);
+            }
+
+            increment() {
+                if (this.currentLoad + this.change_unit <= 100) {
+                    this.currentLoad += this.change_unit;
+                    this.setProgressBar();
+                }
+            }
+
+            decrement() {
+                if (this.currentLoad - this.change_unit >= 0) {
+                    this.currentLoad -= this.change_unit;
+                    this.setProgressBar()
+                }
+            }
+        };
+
+
+        class SystemMonitorCard extends BaseCard {
+            onlineButtonSelector = "#system-monitor-online-button"
+            standbyButtonSelector = "#system-monitor-standby-button"
+            criticalButtonSelector = "#system-monitor-critical-button"
+            cardBodySelector = ".card-body"
+
+            onlineText = "ONLINE"
+            standyText = "STANDBY"
+            criticalText = "CRITICAL"
+
+            cardBodySuccessClasses = ["bg-success"]
+            cardBodyWarningClasses = ["bg-warning", "text-dark"]
+            cardBodyDangerClasses = ["bg-danger"]
+
+            constructor(card) {
+                super(card);
+                this.text = this.onlineText;
+            }
+
+            setDefaults() {
+                this.text = this.onlineText;
+                this.setCardTitleText(this.text)
+                this.removeCardBodyColor()
+                this.setCardBodyColor(this.cardBodySuccessClasses);
+            }
+
+            getCardBody() {
+                return this.card.querySelector(this.cardBodySelector);
+            }
+
+            removeCardBodyColor() {
+                let cardBody = this.getCardBody()
+                let classes = ["bg-success", "bg-warning", "text-dark", "bg-danger"];
+                //remove all classes
+                for (let cls of classes) {
+                    cardBody.classList.remove(cls);
+                }
+            }
+
+            setCardBodyColor(classes) {
+                let cardBody = this.getCardBody()
+                for (let cls of classes) {
+                    cardBody.classList.add(cls);
+                }
+            }
+
+            setOnline() {
+                this.text = this.onlineText;
+                this.setCardTitleText(this.text);
+                this.removeCardBodyColor();
+                this.setCardBodyColor(this.cardBodySuccessClasses);
+            }
+
+            setStandby() {
+                this.text = this.standyText;
+                this.setCardTitleText(this.text);
+                this.removeCardBodyColor();
+                this.setCardBodyColor(this.cardBodyWarningClasses);
+            }
+
+            setCritical() {
+                this.text = this.criticalText;
+                this.setCardTitleText(this.text);
+                this.removeCardBodyColor();
+                this.setCardBodyColor(this.cardBodyDangerClasses);
+            }
+        };
+
+        //Set defaults
+        const system_monitor = new SystemMonitorCard(system_monitor_card);
+        system_monitor.setDefaults();
+
+        const energy_monitor = new EnergyMonitorCard(energy_monitor_card);
+        energy_monitor.setDefaults();
+
+        // create functions
+        function systemMonitorOnlineButtonHandler(_event) {
+            system_monitor.setOnline();
+        }
+
+        function systemMonitorStandbyButtonHandler(_event) {
+            system_monitor.setStandby();
+        }
+
+        function systemMonitorCriticalButtonHandler(_event) {
+            system_monitor.setCritical();
+        }
+
+        function energyMonitorPlusButtonHandler(_event) {
+            energy_monitor.increment();
+        }
+
+        function energyMonitorMinusButtonHandler(_event) {
+            energy_monitor.decrement();
+
+        }
+
+        function energyMonitorResetButtonHandler(_event) {
+            energy_monitor.setDefaults();
+        }
+
+
+        // Set Button Handlers
+        document.querySelector(
+            system_monitor.onlineButtonSelector
+        ).addEventListener("click", systemMonitorOnlineButtonHandler);
+        document.querySelector(
+            system_monitor.standbyButtonSelector
+        ).addEventListener("click", systemMonitorStandbyButtonHandler);
+        document.querySelector(
+            system_monitor.criticalButtonSelector
+        ).addEventListener("click", systemMonitorCriticalButtonHandler);
+
+        document.querySelector(
+            energy_monitor.plusButtonSelector
+        ).addEventListener("click", energyMonitorPlusButtonHandler);
+        document.querySelector(
+            energy_monitor.minusButtonSelector
+        ).addEventListener("click", energyMonitorMinusButtonHandler);
+        document.querySelector(
+            energy_monitor.resetButtonSelector
+        ).addEventListener("click", energyMonitorResetButtonHandler);
+    </script>
+</body>
+
+</html>
